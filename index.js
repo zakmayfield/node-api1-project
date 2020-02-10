@@ -32,9 +32,15 @@ server.get('/api/users', (req, res) => {
 
 // get a user by id -> utilize req.params.id to get the id of the user
 server.get('/api/users/:id', (req, res) => {
-  Users.findById(req.params.id)
+  const id = req.params.id
+
+  Users.findById(id)
     .then(user => {
-      res.status(200).json(user)
+      user === undefined
+      ?
+        res.status(404).json({error: 'user not found by specified ID'})
+      :
+        res.status(200).json(user)
     })
     .catch(err => {
       console.log(err);
@@ -42,6 +48,7 @@ server.get('/api/users/:id', (req, res) => {
     })
 })
 // postman successfully returns the user specifeid by the id
+// 1.) if no user by that id -- returns proper error
 
 // add a new user -> utilize req.body
 server.post('/api/users', (req, res) => {
@@ -66,16 +73,23 @@ server.post('/api/users', (req, res) => {
 // delete a user -> utilize req.params.id
 server.delete('/api/users/:id', (req, res) => {
   const id = req.params.id
+
   Users.remove(id)
     .then(removedUser => {
-      res.status(200).json(removedUser);
+      removedUser === 0
+      ?
+        res.status(404).json({error: 'User not found by specified ID'})
+      :
+        res.status(200).json(removedUser);
     })
     .catch(err => {
-      console.log(err)
-      res.status(500).json({ error: 'Servers broken, yo.'})
+      console.log(err);
+      res.status(500).json({ message: "The user could not be removed"})
     })
+
 })
 // postman successfully removed the desired user
+// 1.) the delete functionality was returned 0 for false and 1 for true, so we say that if we are given a 0 back for our request then say we can't find that user -- else return the user
 
 //update a user -> utilize req.params.id && req.body
 server.put('/api/users/:id', (req, res) => {
@@ -84,7 +98,18 @@ server.put('/api/users/:id', (req, res) => {
 
   Users.update(id, userInfo)
     .then(user => {
-      res.status(200).json(user)
+      console.log(user)
+      if(user === 0){
+        res.status(404).json({error: "User not found"})
+      }
+
+      if(!req.body.name || !req.body.bio){
+        res.status(400).json({error: "Please include name and bio"})
+      }
+
+      if(user){
+        res.status(200).json(user)
+      }
     })
     .catch(err => {
       console.log(err)
@@ -92,6 +117,8 @@ server.put('/api/users/:id', (req, res) => {
     })
 })
 // postman successfully updated the desired user
+// 1.) checks if the user exists
+// 2.) checks if the name and bio are included
 
 
 
