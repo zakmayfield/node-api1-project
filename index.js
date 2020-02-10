@@ -68,6 +68,21 @@ server.delete('/api/users/:id', (req, res) => {
 })
 // postman successfully removed the desired user
 
+//update a user -> utilize req.params.id && req.body
+server.put('/api/users/:id', (req, res) => {
+  const id = req.params.id
+  const userInfo = req.body
+
+  Users.update(id, userInfo)
+    .then(user => {
+      res.status(200).json(user)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({ error: 'Servers broken, yo.'})
+    })
+})
+// postman successfully updated the desired user
 
  const port = 5000; // declare our port
 
