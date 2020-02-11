@@ -7,30 +7,36 @@ import './App.css';
 
 function App() {
   const [users, setUsers] = useState([]);
-  
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/users')
-    .then(res => {
-      setUsers(res.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }, [])
-  
+
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [memberToEdit, setMemberToEdit] = useState({
+    name: '',
+    bio: ''
+  })
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/users')
+      .then(res => {
+        setUsers(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
+
   const nameChange = e => {
     setName(e.target.value);
     // console.log(e.target.name, '=', e.target.value);
   }
-  
+
   const bioChange = e => {
     setBio(e.target.value)
     // console.log(e.target.name, '=', e.target.value);
   }
-  
+
   const handleSubmit = e => {
     const payload = {
       name: name,
@@ -50,8 +56,21 @@ function App() {
       })
   }
 
-  const editMember = e => {
-    console.log('edit clicked')
+  const editMember = member => {
+    setIsEditing(!isEditing)
+    setMemberToEdit(member)
+  }
+
+  const saveEdit = e => {
+    setIsEditing(!isEditing);
+
+    axios.put(`http://localhost:5000/api/users/${memberToEdit.id}`, memberToEdit)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   const deleteMember = id => {
@@ -69,28 +88,68 @@ function App() {
 
   return (
     <div className="App">
-      <div className="formBox">
-        <legend>Add a member to the Fellowship</legend>
-        <form onSubmit={handleSubmit} className="addMemberForm">
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            onChange={nameChange}
-            value={name}
-          />
+      <div className="formBoxes">
+        {
+          !isEditing
+            ?
+            <div className="addFormBox">
+              <legend>Add a member to the Fellowship</legend>
+              <form onSubmit={handleSubmit} className="addMemberForm">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  onChange={nameChange}
+                  value={name}
+                />
 
-          <textarea
-            type="textarea"
-            name="bio"
-            placeholder="Bio"
-            onChange={bioChange}
-            value={bio}
-          />
+                <textarea
+                  type="textarea"
+                  name="bio"
+                  placeholder="Bio"
+                  onChange={bioChange}
+                  value={bio}
+                />
 
-          <button>Add Member</button>
-        </form>
+                <button>Add Member</button>
+              </form>
+            </div>
+            :
+            <div className="editFormBox">
+              <legend>Edit Member</legend>
+              <form onSubmit={saveEdit} className="editMemberForm">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  onChange={e => {
+                    setMemberToEdit({
+                      ...memberToEdit,
+                      name: e.target.value
+                    })
+                  }}
+                  value={memberToEdit.name}
+                />
+
+                <textarea
+                  type="textarea"
+                  name="bio"
+                  placeholder="Bio"
+                  onChange={e => {
+                    setMemberToEdit({
+                      ...memberToEdit,
+                      bio: e.target.value
+                    })
+                  }}
+                  value={memberToEdit.bio}
+                />
+
+                <button type="submit">Edit</button>
+              </form>
+            </div>
+        }
       </div>
+
       <div className="users">
         {
           users.map(user => {
@@ -101,7 +160,7 @@ function App() {
                   <p className="bio">{user.bio}</p>
                 </div>
                 <div className="iconBox">
-                  <span onClick={editMember} className="icon"><img src={editIcon} alt="" /></span>
+                  <span onClick={() => editMember(user)} className="icon"><img src={editIcon} alt="" /></span>
                   <span onClick={() => deleteMember(user.id)} className="icon"><img src={trashIcon} alt="" /></span>
                 </div>
               </div>

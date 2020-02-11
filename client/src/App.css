@@ -2,6 +2,7 @@
   text-align: center;
   display: flex;
   justify-content: space-around;
+  margin-top: 5vh;
 }
 
 .App-logo {
@@ -61,16 +62,26 @@
   border: 1px solid gray;
 }
 
-.formBox{
+.addFormBox, .editFormBox{
   margin: 0 5vw;
+  width: 200px;
 }
 
-.addMemberForm{
+.addMemberForm, .editMemberForm{
   display: flex;
   flex-flow: column;
 }
 
 .addMemberForm input, textarea {
+  display: inline-flex;
+
+  border: 1px solid gray;
+  border-radius: 3px;
+  padding: 3vh .5vw;
+  margin: 2vh 0;
+}
+
+.editMemberForm input, textarea {
   display: inline-flex;
 
   border: 1px solid gray;
@@ -87,4 +98,11 @@
 
 .icon{
   cursor: pointer;
+}
+
+
+
+
+.editFormBox{
+  margin-top: 5vh;
 }
