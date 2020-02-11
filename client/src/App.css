@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  display: flex;
+  justify-content: space-around;
 }
 
 .App-logo {
@@ -42,6 +44,7 @@
 
 .users{
   display: flex;
+  flex-flow: row wrap;
   justify-content: center;
   align-items: stretch;
 }
@@ -55,4 +58,22 @@
   text-align: left;
 
   border: 1px solid gray;
+}
+
+.formBox{
+  margin: 0 5vw;
+}
+
+.addMemberForm{
+  display: flex;
+  flex-flow: column;
+}
+
+.addMemberForm input, textarea {
+  display: inline-flex;
+
+  border: 1px solid gray;
+  border-radius: 3px;
+  padding: 3vh .5vw;
+  margin: 2vh 0;
 }

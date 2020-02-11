@@ -4,19 +4,73 @@ import './App.css';
 
 function App() {
   const [users, setUsers] = useState([]);
-
+  
   useEffect(() => {
     axios.get('http://localhost:5000/api/users')
+    .then(res => {
+      setUsers(res.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }, [])
+  
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
+  
+  const nameChange = e => {
+    setName(e.target.value);
+    // console.log(e.target.name, '=', e.target.value);
+  }
+  
+  const bioChange = e => {
+    setBio(e.target.value)
+    // console.log(e.target.name, '=', e.target.value);
+  }
+  
+  const handleSubmit = e => {
+    const payload = {
+      name: name,
+      bio: bio
+    }
+
+    console.log(payload)
+
+    axios.post('http://localhost:5000/api/users', payload)
       .then(res => {
-        setUsers(res.data)
+        console.log(res)
+        setName('')
+        setBio('')
       })
       .catch(err => {
         console.log(err)
       })
-  }, [])
+  }
 
   return (
     <div className="App">
+      <div className="formBox">
+        <legend>Add a member to the Fellowship</legend>
+        <form onSubmit={handleSubmit} className="addMemberForm">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            onChange={nameChange}
+            value={name}
+          />
+
+          <textarea
+            type="textarea"
+            name="bio"
+            placeholder="Bio"
+            onChange={bioChange}
+            value={bio}
+          />
+
+          <button>Add Member</button>
+        </form>
+      </div>
       <div className="users">
         {
           users.map(user => {
