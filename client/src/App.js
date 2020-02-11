@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+
+import trashIcon from './icons/trashIcon.png';
+import editIcon from './icons/editIcon.png';
 import './App.css';
 
 function App() {
@@ -47,6 +50,23 @@ function App() {
       })
   }
 
+  const editMember = e => {
+    console.log('edit clicked')
+  }
+
+  const deleteMember = id => {
+    console.log('member excommunicated')
+
+    axios.delete(`http://localhost:5000/api/users/${id}`)
+      .then(res => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
   return (
     <div className="App">
       <div className="formBox">
@@ -76,8 +96,14 @@ function App() {
           users.map(user => {
             return (
               <div key={user.id} className="userCard">
-                <p className="name">{user.name}</p>
-                <p className="bio">{user.bio}</p>
+                <div className="memberDetails">
+                  <p className="name">{user.name}</p>
+                  <p className="bio">{user.bio}</p>
+                </div>
+                <div className="iconBox">
+                  <span onClick={editMember} className="icon"><img src={editIcon} alt="" /></span>
+                  <span onClick={() => deleteMember(user.id)} className="icon"><img src={trashIcon} alt="" /></span>
+                </div>
               </div>
             )
           })
